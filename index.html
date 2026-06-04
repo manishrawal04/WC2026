@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>World Cup 2026 Prediction League</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <h1>⚽ World Cup 2026 Prediction League</h1>
+      <p>Predict • Compete • Win ₹36,800</p>
+      <div class="user-section" id="userSection" style="display:none;">
+        <span id="userDisplay"></span>
+        <button onclick="logout()" class="btn-small">Logout</button>
+        <button onclick="adminToggle()" class="btn-small btn-admin" id="adminBtn" style="display:none;">Admin</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="nav-tabs">
+    <button class="nav-btn active" onclick="showPage('login')">Login</button>
+    <button class="nav-btn" id="navPredictions" onclick="showPage('predictions')" style="display:none;">Predictions</button>
+    <button class="nav-btn" id="navTournament" onclick="showPage('tournament')" style="display:none;">Tournament Picks</button>
+    <button class="nav-btn" id="navLeaderboard" onclick="showPage('leaderboard')" style="display:none;">Leaderboard</button>
+    <button class="nav-btn" id="navResults" onclick="showPage('results')" style="display:none;">Results</button>
+    <button class="nav-btn" id="navAdmin" onclick="showPage('admin')" style="display:none;">Admin Panel</button>
+  </nav>
+
+  <main>
+    <!-- LOGIN PAGE -->
+    <section id="login" class="page active">
+      <div class="card">
+        <h2>🎯 Sign In to Predict</h2>
+        <div class="form-group">
+          <label>Select Your Name or Enter Participant ID</label>
+          <input type="text" id="participantSearch" placeholder="Start typing your name...">
+          <div id="participantList" class="participant-dropdown"></div>
+        </div>
+        <div class="form-group">
+          <label>Or Enter Participant ID</label>
+          <input type="text" id="participantId" placeholder="e.g., P01">
+          <button onclick="loginParticipant()" class="btn-primary">Sign In</button>
+        </div>
+        <div class="form-group">
+          <label style="color: #666; font-size: 0.9em;">🔑 Admin Access</label>
+          <input type="password" id="adminPassword" placeholder="Admin password">
+          <button onclick="loginAdmin()" class="btn-small">Admin Login</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PREDICTIONS PAGE -->
+    <section id="predictions" class="page">
+      <div class="card">
+        <h2>Match Predictions</h2>
+        <div class="filter-group">
+          <button class="filter-btn active" onclick="filterMatches('all')">All</button>
+          <button class="filter-btn" onclick="filterMatches('Group')">Group Stage</button>
+          <button class="filter-btn" onclick="filterMatches('Round of 16')">R16</button>
+          <button class="filter-btn" onclick="filterMatches('Quarterfinal')">QF</button>
+          <button class="filter-btn" onclick="filterMatches('Semifinal')">SF</button>
+          <button class="filter-btn" onclick="filterMatches('Final')">Final</button>
+        </div>
+      </div>
+
+      <div id="matchesContainer" class="matches-grid"></div>
+
+      <div class="card actions">
+        <button onclick="savePredictions()" class="btn-primary btn-lg">💾 Save All Predictions</button>
+        <button onclick="clearPredictions()" class="btn-secondary">Clear Form</button>
+      </div>
+    </section>
+
+    <!-- TOURNAMENT PICKS PAGE -->
+    <section id="tournament" class="page">
+      <div class="card">
+        <h2>🏆 Tournament Picks</h2>
+        <p style="color: #666;">Your predictions for tournament winners and award winners</p>
+        
+        <div class="tournament-grid">
+          <div class="form-group">
+            <label>World Cup Winner</label>
+            <input type="text" id="tournamentWinner" placeholder="e.g., France, Brazil, Argentina...">
+            <div class="trophy-icon">🏆</div>
+          </div>
+          <div class="form-group">
+            <label>Runner-up</label>
+            <input type="text" id="tournamentRunnerUp" placeholder="e.g., France, Brazil, Argentina...">
+            <div class="trophy-icon">🥈</div>
+          </div>
+          <div class="form-group">
+            <label>Golden Ball (Best Player)</label>
+            <input type="text" id="tournamentGoldenBall" placeholder="e.g., Messi, Ronaldo...">
+            <div class="trophy-icon">🌟</div>
+          </div>
+          <div class="form-group">
+            <label>Golden Boot (Top Scorer)</label>
+            <input type="text" id="tournamentGoldenBoot" placeholder="e.g., Mbappé, Haaland...">
+            <div class="trophy-icon">👞</div>
+          </div>
+        </div>
+
+        <div class="card actions">
+          <button onclick="saveTournamentPicks()" class="btn-primary btn-lg">💾 Save Tournament Picks</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- LEADERBOARD PAGE -->
+    <section id="leaderboard" class="page">
+      <div class="card">
+        <h2>🏅 Live Leaderboard</h2>
+        <div class="stats-row">
+          <div class="stat-box">
+            <div class="stat-label">Total Prize Pool</div>
+            <div class="stat-value">₹36,800</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Participants</div>
+            <div class="stat-value" id="participantCount">0/26</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Predictions Submitted</div>
+            <div class="stat-value" id="submissionCount">0</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="leaderboard-table" id="leaderboardTable"></div>
+
+      <div class="card">
+        <h2>Match Prize Winners</h2>
+        <div id="matchWinnersTable"></div>
+      </div>
+
+      <div class="card">
+        <h2>Special Awards</h2>
+        <div class="awards-grid">
+          <div class="award-box">
+            <h3>Golden Ball</h3>
+            <p id="goldenBallWinner">Awaiting results...</p>
+            <p class="prize">₹5,000</p>
+          </div>
+          <div class="award-box">
+            <h3>Golden Boot</h3>
+            <p id="goldenBootWinner">Awaiting results...</p>
+            <p class="prize">₹5,000</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULTS PAGE -->
+    <section id="results" class="page">
+      <div class="card">
+        <h2>Match Results & Scoring</h2>
+        <div class="filter-group">
+          <button class="filter-btn active" onclick="filterResults('all')">All</button>
+          <button class="filter-btn" onclick="filterResults('completed')">Completed</button>
+          <button class="filter-btn" onclick="filterResults('pending')">Pending</button>
+        </div>
+      </div>
+
+      <div id="resultsContainer" class="results-grid"></div>
+    </section>
+
+    <!-- ADMIN PANEL -->
+    <section id="admin" class="page">
+      <div class="admin-tabs">
+        <button class="admin-tab-btn active" onclick="showAdminTab('participants')">Participants</button>
+        <button class="admin-tab-btn" onclick="showAdminTab('results')">Enter Results</button>
+        <button class="admin-tab-btn" onclick="showAdminTab('scoring')">Scoring & Prizes</button>
+        <button class="admin-tab-btn" onclick="showAdminTab('reports')">Reports</button>
+      </div>
+
+      <!-- Participants Tab -->
+      <div id="adminParticipants" class="admin-tab active">
+        <div class="card">
+          <h2>Add Participant</h2>
+          <div class="form-group">
+            <label>Participant ID (e.g., P01)</label>
+            <input type="text" id="newParticipantId" placeholder="P01">
+          </div>
+          <div class="form-group">
+            <label>Name</label>
+            <input type="text" id="newParticipantName" placeholder="John Doe">
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="newParticipantEmail" placeholder="john@example.com">
+          </div>
+          <button onclick="addParticipant()" class="btn-primary">Add Participant</button>
+        </div>
+
+        <div class="card">
+          <h2>Participant List</h2>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Paid</th>
+                <th>Points</th>
+                <th>Prize (₹)</th>
+              </tr>
+            </thead>
+            <tbody id="participantTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Results Entry Tab -->
+      <div id="adminResults" class="admin-tab">
+        <div class="card">
+          <h2>Enter Match Results</h2>
+          <div id="resultsEntryContainer"></div>
+        </div>
+      </div>
+
+      <!-- Scoring Tab -->
+      <div id="adminScoring" class="admin-tab">
+        <div class="card">
+          <h2>🧮 Recalculate Scoring</h2>
+          <p>This will automatically calculate points and prizes for all participants.</p>
+          <button onclick="recalculateScoring()" class="btn-primary btn-lg">Calculate Scoring</button>
+          <div id="scoringStatus" style="margin-top: 20px;"></div>
+        </div>
+
+        <div class="card">
+          <h2>Prize Distribution</h2>
+          <table class="data-table">
+            <tr>
+              <td>Overall Winner Prize</td>
+              <td class="text-right">₹10,000</td>
+            </tr>
+            <tr>
+              <td>Golden Ball Winner</td>
+              <td class="text-right">₹5,000</td>
+            </tr>
+            <tr>
+              <td>Golden Boot Winner</td>
+              <td class="text-right">₹5,000</td>
+            </tr>
+            <tr>
+              <td>Group Stage Match Prizes (72×₹100)</td>
+              <td class="text-right">₹7,200</td>
+            </tr>
+            <tr>
+              <td>Knockout Match Prizes (32×₹300)</td>
+              <td class="text-right">₹9,600</td>
+            </tr>
+            <tr style="font-weight: bold; border-top: 2px solid #ccc;">
+              <td>Total Estimated Payout</td>
+              <td class="text-right">₹36,800</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- Reports Tab -->
+      <div id="adminReports" class="admin-tab">
+        <div class="card">
+          <h2>📊 Reports & Exports</h2>
+          <button onclick="exportToCSV('all')" class="btn-secondary">📥 Export All Data (CSV)</button>
+          <button onclick="exportToCSV('predictions')" class="btn-secondary">📥 Export Predictions (CSV)</button>
+          <button onclick="exportToCSV('leaderboard')" class="btn-secondary">📥 Export Leaderboard (CSV)</button>
+          <button onclick="exportToCSV('prizes')" class="btn-secondary">📥 Export Prize Ledger (CSV)</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>World Cup 2026 Prediction League • Tournament Dates: June 11 - July 13, 2026</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
